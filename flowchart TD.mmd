@@ -1,0 +1,69 @@
+flowchart TD
+    %% Start
+    Start([スタート])
+
+    %% 初期化
+    Init[GPIO, I2C, ADC, LCD, ブザー 初期化]
+
+    %% モード初期判定
+    ModeCheck{電圧モードか？}
+
+    %% モード設定
+    ModeVoltage[電圧モード設定]
+    ModeResistance[抵抗モード設定・固定表示描画]
+
+    %% メインループ
+    MainLoop[メインループ]
+
+    %% モード再判定
+    CheckSwitch[モード切替スイッチ状態確認]
+    ModeChange{モード変更あり?}
+
+    %% LED点滅
+    BlinkLED[LEDを3回点滅]
+
+    %% 表示クリア
+    ClearLCD[LCD表示クリア]
+
+    %% モード別処理
+    ResistanceLoop[抵抗モード処理]
+    VoltageLoop[電圧モード処理]
+
+    %% 抵抗モード測定処理
+    RangeSelect[レンジ選択・ADC読み出し]
+    RangeAdjust{適正レンジ?}
+    CalcResistance[抵抗値計算・表示・ブザー制御]
+
+    %% 電圧モード処理
+    VoltageMeasure[ADC読み出し・電圧計算・表示]
+
+    %% フロー開始
+    Start --> Init --> ModeCheck
+
+    %% 初期モード選択
+    ModeCheck -->|Yes| ModeVoltage
+    ModeCheck -->|No| ModeResistance
+
+    %% 各モード設定後メインループへ
+    ModeVoltage --> MainLoop
+    ModeResistance --> MainLoop
+
+    %% メインループ
+    MainLoop --> CheckSwitch
+    CheckSwitch --> ModeChange
+
+    %% モード変更確認
+    ModeChange -->|Yes| BlinkLED --> ClearLCD --> ModeCheck
+    ModeChange -->|No| ModeDecision{現在のモードは?}
+
+    %% モード別処理
+    ModeDecision -->|抵抗モード| ResistanceLoop
+    ModeDecision -->|電圧モード| VoltageLoop
+
+    %% 抵抗モード詳細処理
+    ResistanceLoop --> RangeSelect --> RangeAdjust
+    RangeAdjust -->|Yes| CalcResistance --> MainLoop
+    RangeAdjust -->|No| RangeSelect
+
+    %% 電圧モード詳細処理
+    VoltageLoop --> VoltageMeasure --> MainLoop
