@@ -35,7 +35,14 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Cheap_Tester Cheap_Tester.c )
+add_executable(Cheap_Tester
+    src/main.c
+    src/hw_gpio.c
+    src/hw_i2c.c
+    src/hw_adc.c
+    src/hw_lcd.c
+    src/measure.c
+)
 
 pico_set_program_name(Cheap_Tester "Cheap_Tester")
 pico_set_program_version(Cheap_Tester "0.1")
@@ -49,17 +56,15 @@ target_link_libraries(Cheap_Tester
         pico_stdlib)
 
 # Add the standard include files to the build
-target_include_directories(Cheap_Tester PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
-)
+target_include_directories(Cheap_Tester PRIVATE inc)
 
 # Add any user requested libraries
-target_link_libraries(Cheap_Tester 
-        hardware_i2c
-        hardware_dma
-        hardware_timer
-        hardware_pwm
-        )
+target_link_libraries(Cheap_Tester
+    pico_stdlib
+    hardware_i2c
+    hardware_pwm
+    hardware_timer
+)
 
 pico_add_extra_outputs(Cheap_Tester)
 
