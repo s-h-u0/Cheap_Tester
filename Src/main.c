@@ -8,18 +8,15 @@
 #include "hw_lcd.h"
 #include "measure.h"
 
-/* ---- 電圧変換定数 -------------------------------------------------- */
-#define RES       0.0625f   /* mV/LSB (16‑bit, PGA×1) */
-#define ATT_ADC1  11        /* 分圧比                 */
-#define G_CALIB   0.998f    /* 校正係数               */
-
-/* ---- 動作モード ---------------------------------------------------- */
+/* =========================================================================
+ *  動作モード定義
+ * =========================================================================*/
 typedef enum { MODE_RES = 0, MODE_VOLT } mode_t;
 
 /* --------------------------------------------------------------
  * set_mode_pins()
  *   抵抗 / 電圧モードで MOSFET & 分圧抵抗を切替
- * ------------------------------------------------------------ */
+ * ------------------------------------------------------------*/
 static void set_mode_pins(mode_t m)
 {
     if (m == MODE_RES) {
@@ -50,20 +47,18 @@ static void display_res(uint32_t ohm)
 }
 
 /* ---- 電圧表示 "±xx.xxV" ------------------------------------------- */
-static void display_volt(int16_t raw)
+static void display_volt(int16_t mv)
 {
-    float mv_f = raw * (ATT_ADC1 * RES) * G_CALIB; /* mV (float) */
-    int16_t mv = (int16_t)mv_f;                    /* mV (int)   */
-
     lcd_set_cursor(0);
-    if (raw < 0) { lcd_write_char('-'); mv = -mv; }
-    else         { lcd_write_char('+');           }
 
-    lcd_write_digits(mv/1000,2);
+    if (mv < 0) { lcd_write_char('-'); mv = -mv; }
+    else        { lcd_write_char('+');           }
+
+    lcd_write_digits(mv/1000,2);     /* 整数部 (0‑99V)  */
     lcd_write_char('.');
-    lcd_write_digits((mv%1000)/10,2);
+    lcd_write_digits((mv%1000)/10,2);/* 小数第2位まで */
     lcd_write_char('V');
-    lcd_write_char(' ');
+    lcd_write_char(' ');             /* 末尾空白で残渣消去 */
 }
 
 /* ---- main() -------------------------------------------------------- */
@@ -78,13 +73,14 @@ int main(void)
     hw_lcd_init();
     measure_init();
 
+    /* 起動時にプッシュスイッチの状態でモード確定 */
     mode_t mode = (gpio_get(SW_VOL_GPIO)==0) ? MODE_VOLT : MODE_RES;
     set_mode_pins(mode);
     if (mode == MODE_RES) draw_res_fixed();
 
     while (true)
     {
-        /* --- スイッチでモード切替 ---------------------------------- */
+        /* ---- スイッチでモード切替 -------------------------------- */
         mode_t new_mode = mode;
         if (gpio_get(SW_VOL_GPIO)==0)      new_mode = MODE_VOLT;
         else if (gpio_get(SW_RES_GPIO)==0) new_mode = MODE_RES;
@@ -93,21 +89,23 @@ int main(void)
             mode = new_mode;
             set_mode_pins(mode);
             hw_led_blink(3,100);
+
             /* LCD クリア */
             uint8_t clr[2] = {0x00,0x01};
             i2c_write_blocking(I2C_PORT, LCD_ADDR, clr, 2, false);
             sleep_ms(2);
+
             if (mode == MODE_RES) draw_res_fixed();
         }
 
-        /* --- メイン測定ループ -------------------------------------- */
+        /* ---- メイン測定ループ ------------------------------------ */
         if (mode == MODE_RES) {
             uint32_t ohm = measure_resistance(NULL);
             display_res(ohm);
             hw_buzzer_set(ohm <= 80);
         } else {
-            int16_t raw = measure_voltage();
-            display_volt(raw);
+            int16_t mv = measure_voltage();   /* ← 補正済み mV を取得 */
+            display_volt(mv);
             hw_buzzer_set(false);
         }
         sleep_ms(50);

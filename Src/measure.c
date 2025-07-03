@@ -3,7 +3,17 @@
 #include "hw_adc.h"
 #include "pico/stdlib.h"
 
-#define RESOLUTION_FACTOR (2.048f / 32768.f * 1000.f) /* mV per LSB */
+/* =========================================================================
+ *  定数・テーブル
+ * =========================================================================*/
+/* ADC 1LSB あたりの電圧 (mV) : 2.048V / 32768 * 1000  ≒ 0.0625 */
+#define RESOLUTION_FACTOR  (2.048f / 32768.0f * 1000.0f)
+
+/* 電圧測定用の分圧比 (固定) */
+#define ATT_ADC1           (11)
+
+/* 実測によるキャリブレーション係数 */
+#define G_CALIB            (0.998f)
 
 /* 実測ゲイン補正係数 (ch0‑ch3) */
 static const float gain_tbl[4] = {
@@ -53,16 +63,30 @@ uint32_t measure_resistance(uint8_t *used_range)
 
     /* ---- 抵抗値計算 (Ω) ----------------------------------------- */
     float dut;
-    if      (ch == 0) dut =      1000.f * (2048.f - mv) / mv;
-    else if (ch == 1) dut =     10000.f * (2048.f - mv) / mv;
-    else if (ch == 2) dut =    100000.f * (2048.f - mv) / mv;
-    else               dut =   1000000.f * (2048.f - mv) / mv;
+    if      (ch == 0) dut =      1000.0f * (2048.0f - mv) / mv;
+    else if (ch == 1) dut =     10000.0f * (2048.0f - mv) / mv;
+    else if (ch == 2) dut =    100000.0f * (2048.0f - mv) / mv;
+    else               dut =   1000000.0f * (2048.0f - mv) / mv;
 
     dut *= gain_tbl[ch];
     return (uint32_t)(dut + 0.5f);              /* 四捨五入して整数 */
 }
 
+/* --------------------------------------------------------------------
+ * measure_voltage()
+ *   キャリブレーション・スケーリングを内部で完了し
+ *   実際の mV 値 (±32767 mV) を返す。
+ * ------------------------------------------------------------------ */
 int16_t measure_voltage(void)
 {
-    return hw_adc_read_raw();
+    int16_t raw = hw_adc_read_raw();
+    float mv_f  = raw * (ATT_ADC1 * RESOLUTION_FACTOR) * G_CALIB;
+
+    /* ±方向に丸め誤差抑制 */
+    if (mv_f >= 0.0f)
+        mv_f += 0.5f;
+    else
+        mv_f -= 0.5f;
+
+    return (int16_t)mv_f;
 }
