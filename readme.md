@@ -101,7 +101,6 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 - [部品表 BOM (CheapTester_BOM.pdf)](README/CheapTester_BOM.pdf)
 - [動作フローチャート (CheapTester_Flow.pdf)](README/CheapTester_Flow.pdf)
 
-※ GitHub 上では PDF へのリンクとして開きます。
 
 ---
 
@@ -142,7 +141,7 @@ Cheap_Tester/
   CMakeLists.txt ではこのフォルダの `.c` だけをビルド対象にしています。
 
 - `anser/`  
-  実際に動く **模範解答** を置くフォルダです。  
+  動く **解答** を置くフォルダです。  
   CMakeLists.txt からは参照していないので、通常のビルドではコンパイルされません。
 
 ---
