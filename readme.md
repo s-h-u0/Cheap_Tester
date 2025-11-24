@@ -17,8 +17,8 @@ Raspberry Pi Pico / Pico2 を使った **簡易 LCR テスター風のツール*
 ## 機能概要
 
 - 抵抗測定モード（RES モード）
-  - 自動レンジ
-    - 1 kΩ / 10 kΩ / 100 kΩ / 1 MΩ のリファレンス抵抗を切り替えて測定
+  - 自動レンジ  
+    1 kΩ / 10 kΩ / 100 kΩ / 1 MΩ のリファレンス抵抗を切り替えて測定
   - kΩ 表記・小数点付きで LCD 表示
   - 低抵抗（例：80 Ω 以下）のときにブザー ON（導通チェッカ風）
 
@@ -28,8 +28,7 @@ Raspberry Pi Pico / Pico2 を使った **簡易 LCR テスター風のツール*
   - 正負両方向の電圧測定（理論上 ±約 22 V 程度まで）
 
 - その他
-  - モード切り替え用のプッシュスイッチ 2 個
-  - 測定レンジ切替・MOSFET 駆動
+  - モード切り替え用のトグルスイッチ　1個
   - ステータス確認用 LED（Pico のオンボード LED）
 
 ---
@@ -79,3 +78,11 @@ Raspberry Pi Pico / Pico2 を使った **簡易 LCR テスター風のツール*
 #define PIN_SCL   27
 #define LCD_ADDR  0x3E    /* AQM0802A */
 #define ADC_ADDR  0x68    /* MCP3425  */
+
+
+
+## ドキュメント
+
+- [回路図 (PDF)](README/schematic_CheapTester.pdf)
+- [部品表 BOM (PDF)](README/CheapTester_BOM.pdf)
+- [動作フローチャート (PDF)](README/CheapTester_Flow.pdf)
