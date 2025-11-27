@@ -23,7 +23,7 @@ static void set_mode_pins(mode_t m)
         gpio_put(MOS_GP3, 1);
         gpio_put(MOS_GP2, 0);
         gpio_put(MOS_GP14, 0);
-        gpio_put(MOS_GP12, 1);   // MOS_GP12: アクティブローなので 1=シャットダウン解除
+        gpio_put(SHDN_GP12, 1);   // SHDN_GP12: アクティブローなので 1=シャットダウン解除
 
         // 抵抗モード中の GP8 の状態を決めたいならここで gpio_put(8, 0); など
         // gpio_put(8, 0);
@@ -31,7 +31,7 @@ static void set_mode_pins(mode_t m)
         gpio_put(MOS_GP3, 0);
         gpio_put(MOS_GP2, 1);
         gpio_put(MOS_GP14, 1);
-        gpio_put(MOS_GP12, 0);   // アクティブローでシャットダウン有効
+        gpio_put(SHDN_GP12, 0);   // アクティブローでシャットダウン有効
 
         // ★ここを追加：電圧モードでは GP8 を High
         gpio_put(8, 1);          // もしシンボルがあれば gpio_put(GP8_GPIO, 1); などにする

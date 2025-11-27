@@ -13,7 +13,7 @@ void hw_gpio_init(void)
     /* --- 出力ポート初期化 ------------------------------------------- */
     const uint outs[] = {
         R1_GPIO, R2_GPIO, R3_GPIO, R4_GPIO,
-        MOS_GP3, MOS_GP2, MOS_GP14, MOS_GP12
+        MOS_GP3, MOS_GP2, MOS_GP14, SHDN_GP12
     };
     for (uint i = 0; i < sizeof outs / sizeof outs[0]; ++i) {
         gpio_init(outs[i]);
