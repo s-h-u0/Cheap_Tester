@@ -16,10 +16,10 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 - **電圧測定モード（VOLT モード）**
   - 固定分圧（約 1:11）で電圧を測定
   - 表示形式は `±xx.xx V`
-  - 正負両方向の電圧測定（理論上 ± 約 22 V 程度まで）
+  - 正方向の電圧測定（理論上 + 約 22 V 程度まで）※mcp3425は正負測れるADCでソフトもそうなってますが、回路は正電源のみ測定用になってます。
 
 - **その他**
-  - モード切り替え用のプッシュスイッチ 2 個
+  - モード切り替え用のロッカースイッチ(トグル)1個
   - 測定レンジ切替・MOSFET 駆動
   - ステータス確認用 LED（Pico / Pico2 のオンボード LED）
 
@@ -29,7 +29,7 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 
 ### 必要な部品（目安）
 
-- Raspberry Pi Pico / Pico2 本体
+- Raspberry Pi Pico2 本体
 - I²C キャラクタ LCD  
   - AQM0802A + I²C ブリッジ（アドレス: `0x3E`）を想定
 - ADC（高分解能）
@@ -58,7 +58,7 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 #define MOS_GP3       3
 #define MOS_GP2       2
 #define MOS_GP14     14
-#define MOS_GP12     12
+#define SHDN_GP12     12
 #define BUZZER_GPIO   5
 #define LED_GPIO     25
 #define SW_RES_GPIO  17
@@ -81,11 +81,11 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 | MOSFET 制御       | `MOS_GP3`       | 3    |
 | MOSFET 制御       | `MOS_GP2`       | 2    |
 | MOSFET 制御       | `MOS_GP14`      | 14   |
-| MOSFET 制御       | `MOS_GP12`      | 12   |
+| 低電圧源/SHDN 制御       | `SHDN_GP12`      | 12   |
 | ブザー            | `BUZZER_GPIO`   | 5    |
 | ステータス LED    | `LED_GPIO`      | 25   |
-| 抵抗モード SW     | `SW_RES_GPIO`   | 17   |
-| 電圧モード SW     | `SW_VOL_GPIO`   | 18   |
+| 抵抗モード ロッカSW     | `SW_RES_GPIO`   | 17   |
+| 電圧モード ロッカSW     | `SW_VOL_GPIO`   | 18   |
 | I²C SDA           | `PIN_SDA`       | 26   |
 | I²C SCL           | `PIN_SCL`       | 27   |
 | LCD アドレス      | `LCD_ADDR`      | 0x3E |
