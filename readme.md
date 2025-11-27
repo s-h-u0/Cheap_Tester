@@ -3,15 +3,6 @@
 Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。  
 抵抗値と電圧を測定して、I²C 接続のキャラクタ LCD に表示します。
 
-このリポジトリの目的は **「高校生・初心者が C とマイコンを学ぶ教材」** であることです。
-
-- 実際に動くハードウェア
-- 読みやすい C コード
-- 穴埋め形式の **クイズ版ソースコード**
-- 動く **解答ソースコード**
-
-を同じプロジェクトの中にまとめています。
-
 ---
 
 ## 機能概要
@@ -110,7 +101,6 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 - [部品表 BOM (CheapTester_BOM.pdf)](README/CheapTester_BOM.pdf)
 - [動作フローチャート (CheapTester_Flow.pdf)](README/CheapTester_Flow.pdf)
 
-※ GitHub 上では PDF へのリンクとして開きます。
 
 ---
 
@@ -151,7 +141,7 @@ Cheap_Tester/
   CMakeLists.txt ではこのフォルダの `.c` だけをビルド対象にしています。
 
 - `anser/`  
-  実際に動く **模範解答** を置くフォルダです。  
+  動く **解答** を置くフォルダです。  
   CMakeLists.txt からは参照していないので、通常のビルドではコンパイルされません。
 
 ---
