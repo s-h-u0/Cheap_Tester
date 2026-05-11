@@ -17,7 +17,24 @@ Raspberry Pi Pico / Pico2 を使った **簡易テスター** です。
 - LCD表示: `±xx.xxV`
 - 回路としては正電圧測定を想定
 
-### 3) モード時の主要制御ピン状態
+### 3) 動作イメージ図
+
+```mermaid
+flowchart TD
+    SW[モードスイッチ入力] --> MODE{測定モード}
+    MODE -->|RES| RES[抵抗測定]
+    MODE -->|VOLT| VOLT[電圧測定]
+
+    RES --> RES1[Q8_GPIO = ON]
+    RES --> RES2[SHDN_GP12 = 1]
+    RES --> RES3[R1〜R4で自動レンジ]
+
+    VOLT --> VOL1[Q8_GPIO = OFF]
+    VOLT --> VOL2[SHDN_GP12 = 0]
+    VOLT --> VOL3[固定分圧で測定]
+```
+
+### 4) モード時の主要制御ピン状態
 | ピン | 抵抗測定時 | 電圧測定時 |
 |---|---|---|
 | Q8 (GP4) | ON | OFF |
