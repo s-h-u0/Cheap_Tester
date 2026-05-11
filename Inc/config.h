@@ -11,7 +11,8 @@
 #define MOS_GP3       3
 #define MOS_GP2       2
 #define MOS_GP14     14
-#define MOS_GP12     12
+#define SHDN_GP12    12
+#define Q8_GPIO       4
 #define BUZZER_GPIO   5
 #define LED_GPIO     25
 #define SW_RES_GPIO  17

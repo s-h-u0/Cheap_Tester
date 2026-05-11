@@ -1,56 +1,33 @@
 # Cheap Tester (Raspberry Pi Pico / Pico2)
 
-Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。  
-抵抗値と電圧を測定して、I²C 接続のキャラクタ LCD に表示します。
+Raspberry Pi Pico / Pico2 を使った **簡易テスター** です。  
+抵抗値と電圧を測定し、I²C接続のキャラクタLCDに表示します。
 
 ---
 
-## 機能概要
+## 機能
 
-- **抵抗測定モード（RES モード）**
-  - 自動レンジ  
-    1 kΩ / 10 kΩ / 100 kΩ / 1 MΩ のリファレンス抵抗を切り替えて測定
-  - kΩ 表記・小数点付きで LCD 表示
-  - 低抵抗（例：80 Ω 以下）のときにブザー ON（導通チェッカ風）
+### 1) 抵抗測定モード（RES）
+- 自動レンジ切替（1kΩ / 10kΩ / 100kΩ / 1MΩ）
+- LCDに kΩ 表示（小数点付き）
+- 低抵抗時（目安 80Ω以下）にブザーON
 
-- **電圧測定モード（VOLT モード）**
-  - 固定分圧（約 1:11）で電圧を測定
-  - 表示形式は `±xx.xx V`
-  - 正方向の電圧測定（理論上 + 約 22 V 程度まで）※mcp3425は正負測れるADCでソフトもそうなってますが、回路は正電圧のみ測定用になってます。
+### 2) 電圧測定モード（VOLT）
+- 固定分圧（約 1:11）で測定
+- LCD表示: `±xx.xxV`
+- 回路としては正電圧測定を想定
 
-- **その他**
-  - モード切り替え用のロッカースイッチ(トグル)1個
-  - 測定レンジ切替・MOSFET 駆動
-  - ステータス確認用 LED（Pico / Pico2 のオンボード LED）
+### 3) モード時の主要制御ピン状態
+| ピン | 抵抗測定時 | 電圧測定時 |
+|---|---|---|
+| Q8 (GP4) | ON | OFF |
+| SHDN_GP12 (GP12, Active-Low) | 1 (有効) | 0 (シャットダウン) |
 
 ---
 
-## ハードウェア構成
-
-### 必要な部品（目安）
-
-- Raspberry Pi Pico2 本体
-- I²C キャラクタ LCD  
-  - AQM0802A + I²C ブリッジ（アドレス: `0x3E`）を想定
-- ADC（高分解能）
-  - MCP3425（アドレス: `0x68`）
-- リファレンス抵抗
-  - 1 kΩ
-  - 10 kΩ
-  - 100 kΩ
-  - 1 MΩ  
-  （値は `measure.c` の計算式に合わせています）
-- Nch MOSFET 数個（レンジ切替・測定モード切替用）
-- 圧電ブザー
-- トグルスイッチ 1 個（RES / VOL モード）
-- 必要な配線・基板など
-
-### GPIO 割り当て
-
-`Inc/config.h` で GPIO 割り当てを定義しています（抜粋）。
+## GPIO定義（`Inc/config.h`）
 
 ```c
-/* --- GPIO ------------------------------------------------------------- */
 #define R1_GPIO      13
 #define R2_GPIO      10
 #define R3_GPIO       8
@@ -58,115 +35,81 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 #define MOS_GP3       3
 #define MOS_GP2       2
 #define MOS_GP14     14
-#define SHDN_GP12     12
+#define SHDN_GP12    12
+#define Q8_GPIO       4
 #define BUZZER_GPIO   5
 #define LED_GPIO     25
 #define SW_RES_GPIO  17
 #define SW_VOL_GPIO  18
 
-/* --- I²C -------------------------------------------------------------- */
 #define I2C_PORT  i2c1
 #define PIN_SDA   26
 #define PIN_SCL   27
-#define LCD_ADDR  0x3E    /* AQM0802A */
-#define ADC_ADDR  0x68    /* MCP3425  */
+#define LCD_ADDR  0x3E
+#define ADC_ADDR  0x68
 ```
 
-| 機能              | シンボル        | GPIO |
-|-------------------|-----------------|------|
-| リファレンス抵抗1 | `R1_GPIO`       | 13   |
-| リファレンス抵抗2 | `R2_GPIO`       | 10   |
-| リファレンス抵抗3 | `R3_GPIO`       | 8    |
-| リファレンス抵抗4 | `R4_GPIO`       | 6    |
-| MOSFET 制御       | `MOS_GP3`       | 3    |
-| MOSFET 制御       | `MOS_GP2`       | 2    |
-| MOSFET 制御       | `MOS_GP14`      | 14   |
-| 低電圧源/SHDN 制御       | `SHDN_GP12`      | 12   |
-| ブザー            | `BUZZER_GPIO`   | 5    |
-| ステータス LED    | `LED_GPIO`      | 25   |
-| 抵抗モード ロッカSW     | `SW_RES_GPIO`   | 17   |
-| 電圧モード ロッカSW     | `SW_VOL_GPIO`   | 18   |
-| I²C SDA           | `PIN_SDA`       | 26   |
-| I²C SCL           | `PIN_SCL`       | 27   |
-| LCD アドレス      | `LCD_ADDR`      | 0x3E |
-| ADC アドレス      | `ADC_ADDR`      | 0x68 |
+| 機能 | シンボル | GPIO |
+|---|---|---|
+| 抵抗レンジ1 | `R1_GPIO` | 13 |
+| 抵抗レンジ2 | `R2_GPIO` | 10 |
+| 抵抗レンジ3 | `R3_GPIO` | 8 |
+| 抵抗レンジ4 | `R4_GPIO` | 6 |
+| モード制御MOS | `MOS_GP3` | 3 |
+| モード制御MOS | `MOS_GP2` | 2 |
+| モード制御MOS | `MOS_GP14` | 14 |
+| SHDN制御 | `SHDN_GP12` | 12 |
+| Q8制御 | `Q8_GPIO` | 4 |
+| ブザー | `BUZZER_GPIO` | 5 |
+| LED | `LED_GPIO` | 25 |
+| RESスイッチ | `SW_RES_GPIO` | 17 |
+| VOLスイッチ | `SW_VOL_GPIO` | 18 |
+| I²C SDA | `PIN_SDA` | 26 |
+| I²C SCL | `PIN_SCL` | 27 |
 
 ---
 
-## ドキュメント
-
-ルート直下の `README` フォルダに、ハードウェアの資料をまとめています。
-
-- [回路図 (schematic_CheapTester.pdf)](README/schematic_CheapTester.pdf)
-- [部品表 BOM (CheapTester_BOM.pdf)](README/CheapTester_BOM.pdf)
-- [動作フローチャート (CheapTester_Flow.pdf)](README/CheapTester_Flow.pdf)
-
-
----
-
-## フォルダ構成
+## ディレクトリ構成
 
 ```text
 Cheap_Tester/
-├── README.md                 # このファイル
-├── README/                   # PDF や図などの資料
-│   ├── CheapTester_BOM.pdf
-│   ├── CheapTester_Flow.pdf
-│   └── schematic_CheapTester.pdf
-├── CMakeLists.txt
-├── pico_sdk_import.cmake
-├── .gitignore
-├── .vscode/                  # VS Code 用設定
-├── Inc/                      # ヘッダファイル
+├── readme.md
+├── Inc/
 │   ├── config.h
 │   ├── hw_adc.h
 │   ├── hw_gpio.h
 │   ├── hw_i2c.h
 │   ├── hw_lcd.h
 │   └── measure.h
-├── Src/                      # ★ 学習用：クイズ版（ビルド対象）
+├── Src/                     # ビルド対象
 │   ├── main.c
 │   ├── measure.c
 │   ├── hw_adc.c
 │   ├── hw_gpio.c
 │   ├── hw_i2c.c
 │   └── hw_lcd.c
-└── anser/                    # ★ 模範解答（ビルドされない）
+└── anser/                   # 学習用の解答例（通常ビルド対象外）
     ├── main_ans.c
     └── measure_ans.c
 ```
 
-- `Src/`  
-  高校生・初心者向けの **穴埋めコード** を置くフォルダです。  
-  CMakeLists.txt ではこのフォルダの `.c` だけをビルド対象にしています。
-
-- `anser/`  
-  動く **解答** を置くフォルダです。  
-  CMakeLists.txt からは参照していないので、通常のビルドではコンパイルされません。
-
 ---
 
-## ビルド方法（ざっくり）
+## ビルド
 
-Pico SDK のセットアップが済んでいる前提です。
+Pico SDK が使える環境で:
 
 ```bash
-mkdir build
+mkdir -p build
 cd build
 cmake ..
-ninja      # または make
+cmake --build .
 ```
 
-できあがった `.uf2` を BOOTSEL モードの Pico / Pico2 にコピーすると書き込みできます。
+`PICO_SDK_PATH` が必要な環境では、事前に設定してください。
 
 ---
 
-## 学習用としての進め方
-
-1. まずはクイズ版 (`Src/main.c`, `Src/measure.c`) をそのままビルドして、  
-   実機で抵抗・電圧が測れることを確認する。
-2. コメントを読みながら、少しずつ自分で書き換えたり、穴埋め部分を埋めてみる。
-3. 分からなくなったら `anser/main_ans.c`, `anser/measure_ans.c` を見て、  
-   自分のコードと一行ずつ見比べる。
-4. 気づいたことや理解したことをコメントとしてコードに書き足しておくと、  
-   後から見返したときにとても楽になります。
+## メモ
+- `Src/` が実装本体です。
+- `anser/` は学習用の参考コードです。
