@@ -36,12 +36,12 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(Cheap_Tester
-    src/main.c
-    src/hw_gpio.c
-    src/hw_i2c.c
-    src/hw_adc.c
-    src/hw_lcd.c
-    src/measure.c
+    Src/main.c
+    Src/hw_gpio.c
+    Src/hw_i2c.c
+    Src/hw_adc.c
+    Src/hw_lcd.c
+    Src/measure.c
 )
 
 pico_set_program_name(Cheap_Tester "Cheap_Tester")
@@ -56,7 +56,7 @@ target_link_libraries(Cheap_Tester
         pico_stdlib)
 
 # Add the standard include files to the build
-target_include_directories(Cheap_Tester PRIVATE inc)
+target_include_directories(Cheap_Tester PRIVATE Inc)
 
 # Add any user requested libraries
 target_link_libraries(Cheap_Tester
