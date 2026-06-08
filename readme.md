@@ -19,7 +19,7 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
   - 正方向の電圧測定（理論上 + 約 22 V 程度まで）※mcp3425は正負測れるADCでソフトもそうなってますが、回路は正電圧のみ測定用になってます。
 
 - **その他**
-  - モード切り替え用のロッカースイッチ(トグル)1個
+  - モード切り替え用のロッカースイッチ（トグル動作）1 個（RES 側: `SW_RES_GPIO`、VOL 側: `SW_VOL_GPIO`）
   - 測定レンジ切替・MOSFET 駆動
   - ステータス確認用 LED（Pico / Pico2 のオンボード LED）
 
@@ -42,7 +42,7 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
   （値は `measure.c` の計算式に合わせています）
 - Nch MOSFET 数個（レンジ切替・測定モード切替用）
 - 圧電ブザー
-- トグルスイッチ 1 個（RES / VOL モード）
+- ロッカースイッチ 1 個（RES / VOL モード切り替え、トグル動作・プルアップ入力）
 - 必要な配線・基板など
 
 ### GPIO 割り当て
@@ -91,12 +91,49 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 | Q8 制御               | `Q8_GPIO`             | 4    |
 | ブザー            | `BUZZER_GPIO`   | 5    |
 | ステータス LED    | `LED_GPIO`      | 25   |
-| 抵抗モード ロッカSW     | `SW_RES_GPIO`   | 17   |
-| 電圧モード ロッカSW     | `SW_VOL_GPIO`   | 18   |
+| ロッカースイッチ RES 側 | `SW_RES_GPIO`   | 17   |
+| ロッカースイッチ VOL 側 | `SW_VOL_GPIO`   | 18   |
 | I²C SDA           | `PIN_SDA`       | 26   |
 | I²C SCL           | `PIN_SCL`       | 27   |
 | LCD アドレス      | `LCD_ADDR`      | 0x3E |
 | ADC アドレス      | `ADC_ADDR`      | 0x68 |
+
+---
+
+## 状態遷移図
+
+ロッカースイッチの位置に応じて、抵抗測定モードと電圧測定モードを切り替えます。
+`SW_RES_GPIO` / `SW_VOL_GPIO` はプルアップ入力のため、スイッチで選択された側が Low になります。
+
+```mermaid
+stateDiagram-v2
+    [*] --> Boot: 電源投入 / リセット
+    Boot --> Init: GPIO・I²C・LCD・ADC 初期化
+    Init --> SelectMode: ロッカースイッチ状態確認
+
+    SelectMode --> RES: SW_VOL_GPIO == High
+    SelectMode --> VOLT: SW_VOL_GPIO == Low
+
+    state "抵抗測定モード" as RES
+    note right of RES
+      自動レンジ切替
+      抵抗値をLCD表示
+      80Ω以下でブザーON
+    end note
+
+    state "電圧測定モード" as VOLT
+    note right of VOLT
+      固定分圧経路を選択
+      電圧値をLCD表示
+      ブザーOFF
+    end note
+
+    RES --> VOLT: VOL側へ切替 / LED点滅・LCDクリア
+    VOLT --> RES: RES側へ切替 / LED点滅・LCDクリア
+
+    RES --> RES: RES側のまま測定更新
+    VOLT --> VOLT: VOL側のまま測定更新
+```
 
 ---
 
@@ -115,7 +152,7 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 
 ```text
 Cheap_Tester/
-├── README.md                 # このファイル
+├── readme.md                 # このファイル
 ├── README/                   # PDF や図などの資料
 │   ├── CheapTester_BOM.pdf
 │   ├── CheapTester_Flow.pdf
@@ -165,6 +202,23 @@ ninja      # または make
 ```
 
 できあがった `.uf2` を BOOTSEL モードの Pico / Pico2 にコピーすると書き込みできます。
+
+---
+
+## 簡単プログラム書き込み
+
+ビルド済みの `.uf2` ファイルを Pico2 に書き込むだけなら、専用ツールは不要です。
+Pico2 を USB メモリのように認識させて、ファイルをコピーします。
+
+1. Pico2 の **BOOTSEL（BOOT）ボタン** を押したまま、USB ケーブルで PC に接続します。
+2. PC 側で Pico2 が USB ドライブとして認識され、エクスプローラーが開きます。
+3. 次のファイルを、開いた Pico2 のドライブへドラッグ＆ドロップします。
+
+   ```text
+   C:\Users\shu-morishima\Desktop\Cheap_Tester\build\Cheap_Tester.uf2
+   ```
+
+4. コピーが終わると Pico2 が自動的に再起動し、書き込み完了です。
 
 ---
 
