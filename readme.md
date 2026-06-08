@@ -137,17 +137,6 @@ stateDiagram-v2
 
 ---
 
-## ドキュメント
-
-ルート直下の `README` フォルダに、ハードウェアの資料をまとめています。
-
-- [回路図 (schematic_CheapTester.pdf)](README/schematic_CheapTester.pdf)
-- [部品表 BOM (CheapTester_BOM.pdf)](README/CheapTester_BOM.pdf)
-- [動作フローチャート (CheapTester_Flow.pdf)](README/CheapTester_Flow.pdf)
-
-
----
-
 ## フォルダ構成
 
 ```text
@@ -176,25 +165,6 @@ Cheap_Tester/
 │   ├── hw_i2c.c
 │   └── hw_lcd.c
 ```
-
-- `Src/`  
-  最初から動作するアプリケーション本体のコードを置くフォルダです。
-  CMakeLists.txt ではこのフォルダの `.c` をビルド対象にしています。
-
----
-
-## ビルド方法（ざっくり）
-
-Pico SDK のセットアップが済んでいる前提です。
-
-```bash
-mkdir build
-cd build
-cmake ..
-ninja      # または make
-```
-
-できあがった `.uf2` を BOOTSEL モードの Pico / Pico2 にコピーすると書き込みできます。
 
 ---
 
