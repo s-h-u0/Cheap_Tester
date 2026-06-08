@@ -168,6 +168,23 @@ ninja      # または make
 
 ---
 
+## 簡単プログラム書き込み
+
+ビルド済みの `.uf2` ファイルを Pico2 に書き込むだけなら、専用ツールは不要です。
+Pico2 を USB メモリのように認識させて、ファイルをコピーします。
+
+1. Pico2 の **BOOTSEL（BOOT）ボタン** を押したまま、USB ケーブルで PC に接続します。
+2. PC 側で Pico2 が USB ドライブとして認識され、エクスプローラーが開きます。
+3. 次のファイルを、開いた Pico2 のドライブへドラッグ＆ドロップします。
+
+   ```text
+   C:\Users\shu-morishima\Desktop\Cheap_Tester\build\Cheap_Tester.uf2
+   ```
+
+4. コピーが終わると Pico2 が自動的に再起動し、書き込み完了です。
+
+---
+
 ## 学習用としての進め方
 
 1. まずはクイズ版 (`Src/main.c`, `Src/measure.c`) をそのままビルドして、  
