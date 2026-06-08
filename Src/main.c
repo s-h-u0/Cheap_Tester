@@ -20,27 +20,21 @@ typedef enum { MODE_RES = 0, MODE_VOLT } mode_t;
 static void set_mode_pins(mode_t m)
 {
     if (m == MODE_RES) {
-        gpio_put(MOS_GP3, 1);
-        gpio_put(MOS_GP2, 0);
-        gpio_put(MOS_GP14, 0);
-        gpio_put(SHDN_GP12, 1);   // SHDN_GP12: アクティブローなので 1=シャットダウン解除
-
-        // 抵抗モード中の GP8 の状態を決めたいならここで gpio_put(8, 0); など
-        // gpio_put(8, 0);
+        /* Q1-Q4 are selected by measure_resistance(). */
+        gpio_put(Q5_GPIO, 0);
+        gpio_put(Q6_GPIO, 1);
+        gpio_put(Q7_GPIO, 0);
+        gpio_put(Q8_GPIO, 1);
     } else { // MODE_VOLT
-        gpio_put(MOS_GP3, 0);
-        gpio_put(MOS_GP2, 1);
-        gpio_put(MOS_GP14, 1);
-        gpio_put(SHDN_GP12, 0);   // アクティブローでシャットダウン有効
-
-        // ★ここを追加：電圧モードでは GP8 を High
-        gpio_put(8, 1);          // もしシンボルがあれば gpio_put(GP8_GPIO, 1); などにする
-
-        /* 電圧モードは固定分圧 (10 kΩ) を選択 */
-        gpio_put(R1_GPIO, 0);
-        gpio_put(R2_GPIO, 1);
-        gpio_put(R3_GPIO, 0);
-        gpio_put(R4_GPIO, 0);
+        /* 電圧モードは Q2 の固定分圧経路を選択 */
+        gpio_put(Q1_GPIO, 0);
+        gpio_put(Q2_GPIO, 1);
+        gpio_put(Q3_GPIO, 0);
+        gpio_put(Q4_GPIO, 0);
+        gpio_put(Q5_GPIO, 1);
+        gpio_put(Q6_GPIO, 0);
+        gpio_put(Q7_GPIO, 1);
+        gpio_put(Q8_GPIO, 0);
     }
 }
 

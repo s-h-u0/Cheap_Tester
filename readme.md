@@ -51,14 +51,21 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 
 ```c
 /* --- GPIO ------------------------------------------------------------- */
-#define R1_GPIO      13
-#define R2_GPIO      10
-#define R3_GPIO       8
-#define R4_GPIO       6
-#define MOS_GP3       3
-#define MOS_GP2       2
-#define MOS_GP14     14
-#define SHDN_GP12     12
+#define Q1_GPIO      13
+#define Q2_GPIO      10
+#define Q3_GPIO       8
+#define Q4_GPIO       6
+#define Q5_GPIO      14
+#define Q6_GPIO       3
+#define Q7_GPIO       2
+#define Q8_GPIO       4
+
+/* Measurement range aliases */
+#define R1_GPIO      Q1_GPIO
+#define R2_GPIO      Q2_GPIO
+#define R3_GPIO      Q3_GPIO
+#define R4_GPIO      Q4_GPIO
+
 #define BUZZER_GPIO   5
 #define LED_GPIO     25
 #define SW_RES_GPIO  17
@@ -74,14 +81,14 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 
 | 機能              | シンボル        | GPIO |
 |-------------------|-----------------|------|
-| リファレンス抵抗1 | `R1_GPIO`       | 13   |
-| リファレンス抵抗2 | `R2_GPIO`       | 10   |
-| リファレンス抵抗3 | `R3_GPIO`       | 8    |
-| リファレンス抵抗4 | `R4_GPIO`       | 6    |
-| MOSFET 制御       | `MOS_GP3`       | 3    |
-| MOSFET 制御       | `MOS_GP2`       | 2    |
-| MOSFET 制御       | `MOS_GP14`      | 14   |
-| 低電圧源/SHDN 制御       | `SHDN_GP12`      | 12   |
+| Q1 / リファレンス抵抗1 | `Q1_GPIO` / `R1_GPIO` | 13   |
+| Q2 / リファレンス抵抗2・電圧固定分圧 | `Q2_GPIO` / `R2_GPIO` | 10   |
+| Q3 / リファレンス抵抗3 | `Q3_GPIO` / `R3_GPIO` | 8    |
+| Q4 / リファレンス抵抗4 | `Q4_GPIO` / `R4_GPIO` | 6    |
+| Q5 制御               | `Q5_GPIO`             | 14   |
+| Q6 制御               | `Q6_GPIO`             | 3    |
+| Q7 制御               | `Q7_GPIO`             | 2    |
+| Q8 制御               | `Q8_GPIO`             | 4    |
 | ブザー            | `BUZZER_GPIO`   | 5    |
 | ステータス LED    | `LED_GPIO`      | 25   |
 | 抵抗モード ロッカSW     | `SW_RES_GPIO`   | 17   |
