@@ -178,7 +178,7 @@ Pico2 を USB メモリのように認識させて、ファイルをコピーし
 3. 次のファイルを、開いた Pico2 のドライブへドラッグ＆ドロップします。
 
    ```text
-   C:\Users\shu-morishima\Desktop\Cheap_Tester\build\Cheap_Tester.uf2
+   Cheap_Tester\build\Cheap_Tester.uf2
    ```
 
 4. コピーが終わると Pico2 が自動的に再起動し、書き込み完了です。
