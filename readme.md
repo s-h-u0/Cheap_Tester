@@ -51,14 +51,14 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 
 ```c
 /* --- GPIO ------------------------------------------------------------- */
-#define Q1_GPIO      13
-#define Q2_GPIO      10
-#define Q3_GPIO       8
-#define Q4_GPIO       6
-#define Q5_GPIO      14
-#define Q6_GPIO       3
-#define Q7_GPIO       2
-#define Q8_GPIO       4
+#define Q1_GPIO      11
+#define Q2_GPIO      12
+#define Q3_GPIO      13
+#define Q4_GPIO      14
+#define Q5_GPIO      16
+#define Q6_GPIO      20
+#define Q7_GPIO      15
+#define Q8_GPIO      22
 
 /* Measurement range aliases */
 #define R1_GPIO      Q1_GPIO
@@ -81,14 +81,14 @@ Raspberry Pi Pico / Pico2 を使った **簡易 テスター** です。
 
 | 機能              | シンボル        | GPIO |
 |-------------------|-----------------|------|
-| Q1 / リファレンス抵抗1 | `Q1_GPIO` / `R1_GPIO` | 13   |
-| Q2 / リファレンス抵抗2・電圧固定分圧 | `Q2_GPIO` / `R2_GPIO` | 10   |
-| Q3 / リファレンス抵抗3 | `Q3_GPIO` / `R3_GPIO` | 8    |
-| Q4 / リファレンス抵抗4 | `Q4_GPIO` / `R4_GPIO` | 6    |
-| Q5 制御               | `Q5_GPIO`             | 14   |
-| Q6 制御               | `Q6_GPIO`             | 3    |
-| Q7 制御               | `Q7_GPIO`             | 2    |
-| Q8 制御               | `Q8_GPIO`             | 4    |
+| Q1 / リファレンス抵抗1 | `Q1_GPIO` / `R1_GPIO` | 11   |
+| Q2 / リファレンス抵抗2・電圧固定分圧 | `Q2_GPIO` / `R2_GPIO` | 12   |
+| Q3 / リファレンス抵抗3 | `Q3_GPIO` / `R3_GPIO` | 13   |
+| Q4 / リファレンス抵抗4 | `Q4_GPIO` / `R4_GPIO` | 14   |
+| Q5 制御               | `Q5_GPIO`             | 16   |
+| Q6 制御               | `Q6_GPIO`             | 20   |
+| Q7 制御               | `Q7_GPIO`             | 15   |
+| Q8 制御               | `Q8_GPIO`             | 22   |
 | ブザー            | `BUZZER_GPIO`   | 5    |
 | ステータス LED    | `LED_GPIO`      | 25   |
 | ロッカースイッチ RES 側 | `SW_RES_GPIO`   | 17   |

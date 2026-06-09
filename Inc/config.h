@@ -4,14 +4,14 @@
 #include "hardware/i2c.h"
 
 /* --- GPIO ------------------------------------------------------------- */
-#define Q1_GPIO      13
-#define Q2_GPIO      10
-#define Q3_GPIO       8
-#define Q4_GPIO       6
-#define Q5_GPIO      14
-#define Q6_GPIO       3
-#define Q7_GPIO       2
-#define Q8_GPIO       4
+#define Q1_GPIO      11
+#define Q2_GPIO      12
+#define Q3_GPIO      13
+#define Q4_GPIO      14
+#define Q5_GPIO      16
+#define Q6_GPIO      20
+#define Q7_GPIO      15
+#define Q8_GPIO      22
 
 /* Measurement range aliases */
 #define R1_GPIO      Q1_GPIO
